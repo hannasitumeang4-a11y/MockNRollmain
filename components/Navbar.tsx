@@ -1,55 +1,67 @@
-import React from "react";
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-// 1. Import useRouter dari expo-router
-import { useRouter } from "expo-router";
+// components/Navbar.tsx
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import React from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+// Pastikan path ini benar sesuai folder kamu
+import { useCart } from '../context/CartContext';
 
 export default function Navbar() {
-  // 2. Inisialisasi router
   const router = useRouter();
+  
+  // Menggunakan try-catch sederhana atau pengecekan null agar tidak error saat context belum siap
+  const cartContext = useCart();
+  const cart = cartContext?.cart || [];
 
-  const scrollTo = (id: string) => {
-    if (Platform.OS === "web" && typeof document !== "undefined") {
-      const element = document.getElementById(id);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      }
-    }
-  };
+  // Hitung total item untuk indikator di logo keranjang
+  const totalItems = cart.reduce((sum: number, item: any) => sum + item.quantity, 0);
 
   return (
-    <View style={styles.navbar}>
-      <View style={styles.logoContainer}>
-        <Text style={styles.logo}>
-          MOCK<Text style={{ color: "#D4AF37" }}>N</Text>ROLLS
-        </Text>
+    <View style={styles.navContainer}>
+      {/* Menu Kiri */}
+      <View style={styles.leftLinks}>
+        <TouchableOpacity onPress={() => router.push('/')}>
+          <Text style={styles.linkText}>Home</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('/(user)/about')}>
+          <Text style={styles.linkText}>Our Story</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('/(user)/menu')}>
+          <Text style={styles.linkText}>Shop</Text>
+        </TouchableOpacity>
       </View>
 
-      <View style={styles.links}>
-        {["home", "menu", "gallery", "about", "contact"].map((item) => (
-          <TouchableOpacity
-            key={item}
-            onPress={() => scrollTo(item)}
-            style={styles.linkWrapper}
-          >
-            <Text style={styles.link}>{item.toUpperCase()}</Text>
-            <View style={styles.underline} />
-          </TouchableOpacity>
-        ))}
+      {/* Logo Tengah */}
+      <View style={styles.logoWrapper}>
+        <TouchableOpacity onPress={() => router.push('/')} style={styles.logoCircle}>
+          <Image 
+            source={require('../assets/images/logo-mocknrolls.png')} 
+            style={styles.logoImage} 
+            resizeMode="cover" 
+          />
+        </TouchableOpacity>
       </View>
 
-      <View style={styles.authContainer}>
-        {/* 3. Tambahkan fungsi router.push ke halaman login */}
-        <TouchableOpacity
-          style={styles.reservationBtn}
-          onPress={() => router.push("/auth/login")}
+      {/* Menu Kanan */}
+      <View style={styles.rightIcons}>
+        <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/(user)/profile')}>
+           <Ionicons name="person-circle-outline" size={24} color="#C5A985" />
+           <Text style={styles.loginText}>Log In</Text>
+        </TouchableOpacity>
+        
+        {/* Logo Keranjang */}
+        <TouchableOpacity 
+          style={styles.cartBtn} 
+          onPress={() => router.push('/(user)/cart')}
         >
-          <Text style={styles.reservationText}>BOOK NOW</Text>
+          <View>
+            <Ionicons name="bag-outline" size={24} color="white" />
+            {totalItems > 0 && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{totalItems}</Text>
+              </View>
+            )}
+          </View>
         </TouchableOpacity>
       </View>
     </View>
@@ -57,62 +69,46 @@ export default function Navbar() {
 }
 
 const styles = StyleSheet.create({
-  navbar: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 25,
-    paddingHorizontal: 50,
-    backgroundColor: "#050505",
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(212, 175, 55, 0.1)",
-    zIndex: 1000,
+  navContainer: { 
+    flexDirection: 'row', 
+    backgroundColor: '#0E2F22', 
+    height: 110, 
+    paddingHorizontal: '5%',
+    justifyContent: 'space-between', 
+    alignItems: 'center',
+    borderBottomWidth: 3,
+    borderBottomColor: '#B8860B',
+    zIndex: 10,
   },
-  logoContainer: {
-    flex: 1,
+  leftLinks: { flexDirection: 'row', gap: 20, flex: 1 },
+  linkText: { color: 'white', fontSize: 13, fontWeight: '600', textTransform: 'uppercase' },
+  logoWrapper: { flex: 1, alignItems: 'center' },
+  logoCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#fff',
+    overflow: 'hidden',
+    borderWidth: 2,
+    borderColor: '#B8860B',
   },
-  logo: {
-    color: "#FFFFFF",
-    fontSize: 22,
-    fontWeight: "900",
-    letterSpacing: 4,
-  },
-  links: {
-    flexDirection: "row",
-    gap: 35,
-    flex: 2,
-    justifyContent: "center",
-  },
-  linkWrapper: {
-    alignItems: "center",
-  },
-  link: {
-    color: "#AAAAAA",
-    fontSize: 12,
-    fontWeight: "600",
-    letterSpacing: 2,
-  },
-  underline: {
-    height: 1,
-    width: 0,
-    backgroundColor: "#D4AF37",
-    marginTop: 4,
-  },
-  authContainer: {
-    flex: 1,
-    alignItems: "flex-end",
-  },
-  reservationBtn: {
+  logoImage: { width: '100%', height: '100%' },
+  rightIcons: { flexDirection: 'row', flex: 1, justifyContent: 'flex-end', alignItems: 'center', gap: 15 },
+  iconBtn: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  loginText: { color: 'white', fontSize: 13, fontWeight: '700' },
+  cartBtn: { padding: 5 },
+  badge: {
+    position: 'absolute',
+    right: -5,
+    top: -5,
+    backgroundColor: '#A0522D',
+    borderRadius: 9,
+    width: 18,
+    height: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
     borderWidth: 1,
-    borderColor: "#D4AF37",
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    borderRadius: 5,
+    borderColor: 'white'
   },
-  reservationText: {
-    color: "#D4AF37",
-    fontSize: 11,
-    fontWeight: "bold",
-    letterSpacing: 1,
-  },
+  badgeText: { color: 'white', fontSize: 10, fontWeight: 'bold' }
 });

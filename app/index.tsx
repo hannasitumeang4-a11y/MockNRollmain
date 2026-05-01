@@ -1,28 +1,30 @@
-import React from "react";
-import { ScrollView } from "react-native";
+// app/index.tsx
+import React from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
+// PERBAIKAN: Pastikan N pada Navbar adalah HURUF BESAR sesuai nama file di folder components
+import Hero from '../components/Hero';
+import Menu from '../components/Menu';
+import Navbar from '../components/Navbar';
 
-import About from "../components/About";
-import Contact from "../components/Contact";
-import Footer from "../components/Footer";
-import Gallery from "../components/Gallery";
-import Hero from "../components/Hero";
-import Menu from "../components/Menu";
-import Navbar from "../components/Navbar";
-import Testimonials from "../components/Testimonials";
-
-export default function Home() {
+export default function Page() {
   return (
-    <ScrollView>
+    <View style={styles.container}>
       <Navbar />
-
-      <Hero />
-      <Menu />
-      <Gallery />
-      <About />
-      <Testimonials />
-      <Contact />
-
-      <Footer />
-    </ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Hero />
+        <View style={styles.sectionDivider} />
+        <Menu />
+      </ScrollView>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#F4F1E9' },
+  sectionDivider: { 
+    height: 1, 
+    backgroundColor: '#E0DDD5', 
+    marginHorizontal: '10%',
+    marginVertical: 20 
+  }
+});

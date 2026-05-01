@@ -7,21 +7,14 @@ export default function RootLayout() {
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: "#050505" },
+          contentStyle: { backgroundColor: "#0A192F" },
+          animation: "fade",
         }}
       >
-        {/* Halaman utama */}
         <Stack.Screen name="index" />
 
-        {/* Rute untuk Login/Auth */}
-        <Stack.Screen
-          name="(auth)/login"
-          options={{
-            animation: "fade",
-          }}
-        />
+        <Stack.Screen name="(auth)/login" />
 
-        {/* Rute untuk Dashboard Admin */}
         <Stack.Screen
           name="(admin)/dashboard"
           options={{
@@ -29,7 +22,6 @@ export default function RootLayout() {
           }}
         />
 
-        {/* Halaman Modal */}
         <Stack.Screen
           name="modal"
           options={{
